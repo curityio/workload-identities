@@ -1,0 +1,25 @@
+######################################################################
+# Parameters for a simple deployment of the Curity Identity Server
+# https://github.com/curityio/idsvr-helm/blob/master/idsvr/values.yaml
+######################################################################
+
+replicaCount: 1
+
+image:
+  repository: 'custom_idsvr'
+  tag: '1.0'
+
+curity:
+  adminUiHttp: true
+  admin:
+    serviceAccount:
+      name: curity-idsvr-admin
+
+  runtime:
+    serviceAccount:
+      name: curity-idsvr-runtime
+
+  config:
+    uiEnabled: true
+    environmentVariableSecrets:
+    - idsvr-secrets

@@ -1,0 +1,37 @@
+#
+# A test workload that requests a Kubernetes projected service account token
+#
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workload-client
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workload-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workload-client
+  template:
+    metadata:
+      labels:
+        app: workload-client
+    spec:
+      serviceAccountName: workload-client
+      containers:
+      - name: workload-client
+        image: client:1.0
+        volumeMounts:
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: jwt-workload-credential
+      volumes:
+      - name: jwt-workload-credential
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: assertion
+              expirationSeconds: 3600
+              audience: 'https://login.curitydemo.example/oauth/v2/oauth-token'

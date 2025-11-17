@@ -1,0 +1,29 @@
+########################################################################
+# Parameters for a service mesh deployment of the Curity Identity Server
+# https://github.com/curityio/idsvr-helm/blob/master/idsvr/values.yaml
+########################################################################
+
+replicaCount: 1
+
+image:
+  repository: 'custom_idsvr'
+  tag: '1.0'
+
+curity:
+  adminUiHttp: true
+  admin:
+    podLabels:
+      sidecar.istio.io/inject: 'true'
+    serviceAccount:
+      name: curity-idsvr-admin
+
+  runtime:
+    podLabels:
+      sidecar.istio.io/inject: 'true'
+    serviceAccount:
+      name: curity-idsvr-runtime
+
+  config:
+    uiEnabled: true
+    environmentVariableSecrets:
+    - idsvr-secrets
