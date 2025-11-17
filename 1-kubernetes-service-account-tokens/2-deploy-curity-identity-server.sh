@@ -23,7 +23,7 @@ fi
 #
 # Prevent accidental check-ins of license files
 #
-cp ../hooks/pre-commit .git/hooks
+cp ../hooks/pre-commit ../.git/hooks
 
 #
 # Build the Docker image for this deployment
@@ -43,7 +43,7 @@ kubectl -n curity apply -f ../resources/idsvr/service-accounts.yaml
 # Configure the Kubernetes root CA as a trust store
 # This enables the Curity Identity Server to call the Kubernetes JWKS URI without trust errors
 #
-export WORKLOAD_ROOT_CA="$(kubectl get configmap -o jsonpath='{.items[0].data.ca\.crt}' | openssl base64 | tr -d '\n')"
+export WORKLOAD_ROOT_CA="$(kubectl get configmap/kube-root-ca.crt -o jsonpath='{.data.ca\.crt}' | openssl base64 | tr -d '\n')"
 if [ "$WORKLOAD_ROOT_CA" == '' ]; then
   echo 'Unable to get the Kubernetes root CA'
   exit 1

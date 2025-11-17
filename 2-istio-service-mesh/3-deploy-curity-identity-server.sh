@@ -23,7 +23,7 @@ fi
 #
 # Prevent accidental check-ins of license files
 #
-cp ../hooks/pre-commit .git/hooks
+cp ../hooks/pre-commit ../.git/hooks
 
 #
 # Build the Docker image for this deployment
