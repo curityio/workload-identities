@@ -1,0 +1,39 @@
+#
+# A test workload that downloads SVIDs
+#
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workload-client
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workload-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workload-client
+  template:
+    metadata:
+      labels:
+        app: workload-client
+    spec:
+      serviceAccountName: workload-client
+      containers:
+      - name: workload-client
+        image: client:1.0
+        volumeMounts:
+          - name: spiffe-workload-api
+            mountPath: /spiffe-workload-api
+            readOnly: true
+          - name: svids
+            mountPath: /svids
+      volumes:
+        - name: spiffe-workload-api
+          csi:
+            driver: "csi.spiffe.io"
+            readOnly: true
+        - name: svids
+          emptyDir: {}

@@ -11,7 +11,7 @@ Workloads can also potentially use sender-constrained OAuth access tokens to har
 Deployments use a local Kubernetes cluster so your local computer needs the following prequisites:
 
 - Docker
-- KIND
+- KIND 0.30 or later
 - Kubernetes CLI
 - Helm
 
@@ -31,7 +31,15 @@ The mesh upgrades internal OAuth requests to use mutual TLS, to ensure request c
 
 - [Run the Deployment](2-istio-service-mesh/README.md)
 
+## Deployment 3: SPIFFE and SPIRE
+
+The final deployment integrates the Crity Identity Server with SPIFFE and SPIRE.\
+This allows the most complete use of workload credentials with JWT SVIDs and X509 SVIDs.
+
+- [Run the Deployment](3-spiffe-and-spire/README.md)
+
 ## More Information
 
-- See the [Non Human Identities](https://curity.io/learn/non-human-identities) tutorials for further details on behaviors.
+- See the [Non Human Identities](https://curity.io/learn/non-human-identities) tutorials for further details on the integrations.
+- See the [Kubernetes Tutorials](https://curity.io/resources/kubernetes/) for further related content, on topics like adding ingress and data sources.
 - Please visit [curity.io](https://curity.io/) for more information about the Curity Identity Server.

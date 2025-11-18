@@ -20,7 +20,6 @@ if [ $? -ne 0 ]; then
 fi
 
 #
-# Force a redeployment of the client workload
+# Deploy the client workload
 #
-kubectl -n applications delete -f client.yaml 2>/dev/null
 kubectl -n applications apply  -f client.yaml
