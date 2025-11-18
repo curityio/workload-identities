@@ -46,35 +46,27 @@ The client calls a plain HTTP URL, which sidecars upgrade to an internal mTLS co
 curl -s http://curity-idsvr-runtime-svc.curity:8443/oauth/v2/oauth-anonymous/jwks | jq
 ```
 
-In a separate terminal, view logs for the Istio sidecar of the Curity Identity Server:
+## View X509 Workload Identities
+
+In a separate terminal, get a shell in the Istio sidecar of the client workload:
 
 ```bash
-POD=$(kubectl -n curity get pods --selector='role=curity-idsvr-runtime' -o=name)
-kubectl -n curity logs -f "$POD" -c istio-proxy
+SIDECAR=$(kubectl -n applications get pods --selector='app=workload-client' -o=name)
+kubectl -n applications exec -it "$SIDECAR" -c istio-proxy -- bash
 ```
 
-Some debug output in an Envoy filter shows the client certificate that the client's sidecar sends.\
-This workload identity enables the mTLS connection to succeed:
+Then run the following commands to view the X509 workload identity for OAuth endpoints:
+
+```bash
+openssl s_client -showcerts \
+    -connect curity-idsvr-runtime-svc.curity:8443 \
+    -CAfile /var/run/secrets/istio/root-cert.pem 2>/dev/null | \
+    openssl x509 -in /dev/stdin -text -noout
+```
+
+The certificate's X509 URI SAN provides a SPIFFE ID that identifies runtime workloads:
 
 ```text
------BEGIN CERTIFICATE-----
-MIIDRzCCAi+gAwIBAgIQcU3mqSN9xQ39IVQQX3kTFzANBgkqhkiG9w0BAQsFADAV
-MRMwEQYDVQQKEwpjdXJpdHlkZW1vMB4XDTI1MTExNzExNTIwMloXDTI1MTExODEx
-NTQwMlowADCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMMhQ8WhXVnw
-dic12ahx8eSZHw9kA5pqwe7Nv8yZUQtnzL6/9xKpBvs/pXw9mxDxTWQaYSe/Xfw9
-WbmhE+nQAg5XDS+6grworHzyuPs0g3iOci+0diYw8rGuKXK2iRaX3Hy2eIOWZFFf
-AEyFrkPdF4kHNUQbM7peNtHA5b9W9WwdfUqjlmd/MGuoFHYZbaeAEvzpz3PadMaH
-qnYBF0M2muOhffv3Dv86TyaIE2QDjF0kDzvPC0h0BunW48w7gqAs3Dxu2OgFN2w7
-O6GH26IdV4Oz9HVGLxDyd98tAxWO7YGnjXpaX/A/M2/6Fa9kzjGSbltwB3I9ya4N
-wddxqDWxCEcCAwEAAaOBpzCBpDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYI
-KwYBBQUHAwEGCCsGAQUFBwMCMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUSkN/
-hI7yWKRXW0dJecRbYAgQhjEwRAYDVR0RAQH/BDowOIY2c3BpZmZlOi8vY3VyaXR5
-ZGVtby9ucy9hcHBsaWNhdGlvbnMvc2Evd29ya2xvYWQtY2xpZW50MA0GCSqGSIb3
-DQEBCwUAA4IBAQA0R4ePJDKadt7fxiO8cVyVJhR/It81HOExzA437ngoACYq0oyC
-FoBlMoX2FJtHeYRZu4d8DO5ES5UOQ/DeLPjtcL/Q9bDrj7nLNfOvTD3G3HSXosIs
-YNTuXCsHhodPiF9sqpFl6s3RmqFdPF/ZzLlyKtsLOFiWhsgckVipGErqdGude4tO
-E2tTbw4O+MrH7KHk+rkc2QzT0ictYoQhx9HCKa7ojZeukd7R4XbNrxrMtZ6Xkttw
-6zI5iu7sdoJL65bfaeQzhJRPuM7rwJkoL0zWhrikYE1vctC9UlmDx/TA+stYhtAc
-gOI3mro3CAldMClaeAHM+YoGv/dDq2cDxBe+
------END CERTIFICATE-----
+X509v3 Subject Alternative Name: critical
+    URI:spiffe://curitydemo/ns/curity/sa/curity-idsvr-runtime
 ```

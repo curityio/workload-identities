@@ -64,8 +64,3 @@ fi
 # Require peer authentication for endpoints of the Curity Identity Server
 #
 kubectl -n curity apply -f idsvr/mtls.yaml
-
-#
-# Also apply an Envoy filter for debugging certificates sent in mTLS requests
-#
-kubectl -n curity apply -f idsvr/envoy-filter.yaml
