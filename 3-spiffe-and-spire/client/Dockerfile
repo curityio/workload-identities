@@ -7,5 +7,6 @@ RUN apt-get update && apt-get install -y curl jq openssl
 WORKDIR /work
 COPY spiffe-helper    /work/
 COPY helper.conf      /work/
+COPY scripts/*.sh     /work/
 
 CMD ["/work/spiffe-helper"]

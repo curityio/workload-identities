@@ -1,0 +1,34 @@
+###########################################################################################
+# A deployment of the Curity Identity Server that uses Istio sidecars with SPIRE identities
+# This deployment is sufficient to use SPIFFE JWT SVIDs
+# https://github.com/curityio/idsvr-helm/blob/master/idsvr/values.yaml
+###########################################################################################
+
+replicaCount: 1
+
+image:
+  repository: 'custom_idsvr'
+  tag: '1.0'
+
+curity:
+  adminUiHttp: true
+  admin:
+    podLabels:
+      sidecar.istio.io/inject: 'true'
+    podAnnotations:
+      inject.istio.io/templates: 'sidecar,spire'
+    serviceAccount:
+      name: curity-idsvr-admin
+
+  runtime:
+    podLabels:
+      sidecar.istio.io/inject: 'true'
+    podAnnotations:
+      inject.istio.io/templates: 'sidecar,spire'
+    serviceAccount:
+      name: curity-idsvr-runtime
+
+  config:
+    uiEnabled: true
+    environmentVariableSecrets:
+    - idsvr-secrets

@@ -4,7 +4,7 @@
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y curl jq
 
-WORKDIR /scripts
-COPY scripts/*.sh /scripts/
+WORKDIR /work
+COPY scripts/*.sh /work/
 
 CMD ["/bin/sleep", "infinity"]

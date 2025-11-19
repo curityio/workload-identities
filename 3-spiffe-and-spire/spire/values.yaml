@@ -21,3 +21,7 @@ spire-server:
       issuerName: spire-ca-issuer
       issuerKind: ClusterIssuer
       issuerGroup: cert-manager.io
+
+socketAlternate:
+  names:
+    - workload-socket

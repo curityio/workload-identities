@@ -6,4 +6,4 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-./istio/deploy.sh
+./service-mesh/deploy.sh

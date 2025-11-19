@@ -34,10 +34,11 @@ if [ $? -ne 0 ]; then
 fi
 
 #
-# Create the namespace and service accounts
+# Create the namespace and service accounts, and require mTLS to call workloads
 #
 kubectl create namespace curity 2>/dev/null
 kubectl -n curity apply -f ../resources/idsvr/service-accounts.yaml
+kubectl -n curity apply -f ../resources/idsvr/mtls.yaml
 
 #
 # Deploy runtime secrets
@@ -59,8 +60,3 @@ if [ $? -ne 0 ]; then
   echo 'Problem encountered running the Helm Chart for the Curity Identity Server'
   exit 1
 fi
-
-#
-# Require peer authentication for endpoints of the Curity Identity Server
-#
-kubectl -n curity apply -f idsvr/mtls.yaml

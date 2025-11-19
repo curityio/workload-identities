@@ -19,6 +19,9 @@ spec:
     metadata:
       labels:
         app: workload-client
+        sidecar.istio.io/inject: 'true'
+      annotations:
+        inject.istio.io/templates: 'sidecar,spire'
     spec:
       serviceAccountName: workload-client
       containers:
@@ -33,7 +36,7 @@ spec:
       volumes:
         - name: spiffe-workload-api
           csi:
-            driver: "csi.spiffe.io"
+            driver: 'csi.spiffe.io'
             readOnly: true
         - name: svids
           emptyDir: {}

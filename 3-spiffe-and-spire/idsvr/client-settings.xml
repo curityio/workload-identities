@@ -1,0 +1,51 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <profiles xmlns="https://curity.se/ns/conf/base">
+    <profile>
+      <id>token-service</id>
+      <type xmlns:as="https://curity.se/ns/conf/profile/oauth">as:oauth-service</type>
+      <settings>
+        <authorization-server xmlns="https://curity.se/ns/conf/profile/oauth">
+          <client-authentication>
+            <asymmetrically-signed-jwt>
+              <signature-algorithm>ES256</signature-algorithm>
+            </asymmetrically-signed-jwt>
+            <using-jwt>
+              <client-id-mappings>
+                <client-id-mapping>
+                  <sub>spiffe://curitydemo/ns/applications/sa/workload-client</sub>
+                  <client-id>jwt_assertion_client</client-id>
+                </client-id-mapping>
+              </client-id-mappings>
+            </using-jwt>
+          </client-authentication>
+          <client-store>
+            <config-backed>
+              <client>
+                <id>jwt_assertion_client</id>
+                <jwks-uri>
+                  <uri>https://spire-spiffe-oidc-discovery-provider.spire-server/keys</uri>
+                  <http-client>workload_trust_client</http-client>
+                </jwks-uri>
+                <assertion-jwt-validation>
+                  <issuer>https://oidc-discovery.curitydemo</issuer>
+                </assertion-jwt-validation>
+                <access-token-ttl>900</access-token-ttl>
+                <audience>api.curitydemo.example</audience>
+                <scope>reports</scope>
+                <capabilities>
+                  <client-credentials/>
+                </capabilities>
+                <properties>
+                  <property>
+                    <key>at_issuer</key>
+                    <value>jwt</value>
+                  </property>
+                </properties>
+              </client>
+            </config-backed>
+          </client-store>
+        </authorization-server>
+      </settings>
+    </profile>
+  </profiles>
+</config>
