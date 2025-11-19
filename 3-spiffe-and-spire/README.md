@@ -29,19 +29,19 @@ The example deployment then integrates a service mesh with SPIRE:
 ./4-deploy-service-mesh.sh
 ```
 
-Then deploy application workloads to enable inspection of SVID documents:
-
-```bash
-./5-deploy-application-workloads.sh
-```
-
 Then deploy the Curity Identity Server, supplying the path to a license file.\
 Start with the simpler deployment that only uses JWT SVIDs:
 
 ```bash
 export LICENSE_FILE_PATH=license.json
 export CONFIGURE_X509_TRUST=false
-./6-deploy-curity-identity-server.sh
+./5-deploy-curity-identity-server.sh
+```
+
+Then deploy application workloads to enable inspection of SVID documents:
+
+```bash
+./6-deploy-application-workloads.sh
 ```
 
 ## Use the Admin UI
@@ -118,7 +118,7 @@ Redeploy the Curity Identity Server with a more complex deployment that enables 
 ```bash
 export LICENSE_FILE_PATH=license.json
 export CONFIGURE_X509_TRUST=true
-./6-deploy-curity-identity-server.sh
+./5-deploy-curity-identity-server.sh
 ```
 
 Remote to the workload client's pod:
