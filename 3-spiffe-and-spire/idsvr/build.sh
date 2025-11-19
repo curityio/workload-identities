@@ -16,17 +16,37 @@ cp *.xml                                                    build/
 cp ../../resources/idsvr/client_credentials_token_issuer.js build/
 
 #
-# Build the custom Docker image
+# Copy in extra configuration if running the more complex deployment that uses X509 SVIDs
+#
+if [ "$CONFIGURE_X509_TRUST" == 'true' ]; then
+  cp ./x509/*.xml build/
+fi
+
+#
+# Build a custom Docker image for the Curity Identity Server and load it into the KIND registry
 #
 docker build --no-cache -t custom_idsvr:1.0 .
 if [ $? -ne 0 ]; then
   exit 1
 fi
 
-#
-# Load the Docker image into the KIND registry
-#
 kind load docker-image custom_idsvr:1.0 --name curitydemo
 if [ $? -ne 0 ]; then
   exit 1
 fi
+
+#
+# Build extra init and sidecar containers if running the more complex deployment that uses X509 SVIDs
+#
+if [ "$CONFIGURE_X509_TRUST" == 'true' ]; then
+  
+  ./x509/init/build.sh
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+  ./x509/update/build.sh
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+fi
+

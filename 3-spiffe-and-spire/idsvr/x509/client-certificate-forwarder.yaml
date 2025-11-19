@@ -1,0 +1,43 @@
+#
+# An Envoy filter to pass a workload X509 certificate to the Curity Identity Server
+# This enables a workload to use mTLS by proxy client authentication
+#
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: x509-filter
+  namespace: curity
+spec:
+  workloadSelector:
+    labels:
+      role: curity-idsvr-runtime
+  configPatches:
+    
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_INBOUND
+      listener:
+        portNumber: 8443
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+            subFilter:
+              name: "envoy.filters.http.router"
+
+    patch:
+      operation: INSERT_BEFORE
+      value:
+       name: envoy.filters.http.lua
+       typed_config:
+          "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
+          inlineCode: |
+            function envoy_on_request(request_handle)
+
+              local streamInfo = request_handle:streamInfo()
+              if streamInfo ~= nil then
+                local downstreamSsl = streamInfo:downstreamSslConnection()
+                if downstreamSsl ~= nil then
+                  request_handle:headers():add("x-client-certificate", downstreamSsl:urlEncodedPemEncodedPeerCertificate())
+                end
+              end
+            end

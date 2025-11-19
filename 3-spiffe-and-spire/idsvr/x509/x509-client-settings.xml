@@ -1,0 +1,43 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <profiles xmlns="https://curity.se/ns/conf/base">
+    <profile>
+      <id>token-service</id>
+      <type xmlns:as="https://curity.se/ns/conf/profile/oauth">as:oauth-service</type>
+      <settings>
+        <authorization-server xmlns="https://curity.se/ns/conf/profile/oauth">
+          <client-authentication>
+            <mutual-tls>
+              <by-proxy>
+                <client-certificate-http-header>x-client-certificate</client-certificate-http-header>
+              </by-proxy>
+            </mutual-tls>
+          </client-authentication>
+          <client-store>
+            <config-backed>
+              <client>
+                <id>x509_certificate_client</id>
+                <mutual-tls-by-proxy>
+                  <client-uri>spiffe://curitydemo/ns/applications/sa/workload-client</client-uri>
+                  <trusted-ca>workload_root_ca</trusted-ca>
+                  <trusted-ca>workload_intermediate_ca</trusted-ca>
+                </mutual-tls-by-proxy>
+                <access-token-ttl>900</access-token-ttl>
+                <audience>api.curitydemo.example</audience>
+                <scope>reports</scope>
+                <capabilities>
+                  <client-credentials/>
+                </capabilities>
+                <properties>
+                  <property>
+                    <key>at_issuer</key>
+                    <value>jwt</value>
+                  </property>
+                </properties>
+              </client>
+            </config-backed>
+          </client-store>
+        </authorization-server>
+      </settings>
+    </profile>
+  </profiles>
+</config>
