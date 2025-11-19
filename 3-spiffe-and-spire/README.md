@@ -113,7 +113,7 @@ The script then outputs the header and payload of the access token that the work
 
 ## Test X509 SVIDs
 
-Redeploy the Curity Identity Server with a more complex deployment that also uses X509 SVIDs:
+Redeploy the Curity Identity Server with a more complex deployment that enables the use of X509 SVIDs:
 
 ```bash
 export LICENSE_FILE_PATH=license.json

@@ -26,14 +26,14 @@ Workloads can use projected service account tokens to get a JWT credential for a
 
 ## Deployment 2: Istio Service Mesh
 
-The next deployment integrates the Crity Identity Server with an Istio service mesh.\
+The next deployment integrates the Curity Identity Server with an Istio service mesh.\
 The mesh upgrades internal OAuth requests to use mutual TLS, to ensure request confidentiality.
 
 - [Run the Deployment](2-istio-service-mesh/README.md)
 
 ## Deployment 3: SPIFFE and SPIRE
 
-The final deployment integrates the Crity Identity Server with SPIFFE and SPIRE.\
+The final deployment integrates the Curity Identity Server with SPIFFE and SPIRE.\
 This allows the most complete use of workload credentials with JWT SVIDs and X509 SVIDs.
 
 - [Run the Deployment](3-spiffe-and-spire/README.md)
