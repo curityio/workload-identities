@@ -40,6 +40,6 @@ This allows the most complete use of workload credentials with JWT SVIDs and X50
 
 ## More Information
 
-- See the [Non Human Identities](https://curity.io/learn/non-human-identities) tutorials for further details on the integrations.
+- See the [Non Human Identities](https://curity.io/resources/non-human-identities) tutorials for further details on the integrations.
 - See the [Kubernetes Tutorials](https://curity.io/resources/kubernetes/) for further related content, on topics like adding ingress and data sources.
 - Please visit [curity.io](https://curity.io/) for more information about the Curity Identity Server.
