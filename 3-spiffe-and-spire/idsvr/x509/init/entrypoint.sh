@@ -17,6 +17,6 @@ awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/tmp/cert." c ".pem"}' < /svids/s
 WORKLOAD_INTERMEDIATE_CA=$(cat /tmp/cert.2.pem | openssl base64 | tr -d '\n')
 
 echo 'Writing environment variables for the main container ...'
-echo "WORKLOAD_INTERMEDIATE_CA=$WORKLOAD_INTERMEDIATE_CA" >> /tmp/startup-environment-variables/.env
+echo "WORKLOAD_INTERMEDIATE_CA=$WORKLOAD_INTERMEDIATE_CA" > /tmp/startup-environment-variables/.env
 
 echo 'Trust init container completed successfully'
