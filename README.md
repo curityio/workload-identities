@@ -38,7 +38,7 @@ This deployment shows how workloads from any environment can use JWT SVIDs.
 
 - [Run the Deployment](3-spiffe-and-spire-jwt-svids/README.md)
 
-## Deployment 3: SPIFFE and SPIRE with X509 SVIDs
+## Deployment 4: SPIFFE and SPIRE with X509 SVIDs
 
 The fourth deployment also integrates the Curity Identity Server with SPIFFE and SPIRE.\
 This deployment shows how workloads can use X509 SVIDs as an authentication credential.
