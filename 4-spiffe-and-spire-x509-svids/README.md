@@ -55,13 +55,6 @@ Then browse to `http://localhost:6749/admin` and sign in as user `admin` with pa
 
 ## Test X509 SVIDs
 
-Redeploy the Curity Identity Server with a more complex deployment that enables the use of X509 SVIDs:
-
-```bash
-export LICENSE_FILE_PATH=license.json
-./5-deploy-curity-identity-server.sh
-```
-
 Remote to the workload client's pod:
 
 ```bash
