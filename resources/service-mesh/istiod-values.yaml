@@ -1,0 +1,12 @@
+meshConfig:
+  trustDomain: curitydemo
+
+sidecarInjectorWebhook:
+  templates:
+    spire: |
+      spec:
+        volumes:
+          - name: workload-socket
+            csi:
+              driver: "csi.spiffe.io"
+              readOnly: true

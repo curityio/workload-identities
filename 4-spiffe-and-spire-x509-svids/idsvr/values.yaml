@@ -50,7 +50,6 @@ curity:
     #
     - name: trust-update
       image: trust_update:1.0
-      securityContext: {}
       restartPolicy: Always
       volumeMounts:
       - name: spiffe-workload-api

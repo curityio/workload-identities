@@ -1,5 +1,5 @@
 #
-# A test workload that downloads SVIDs
+# A test workload that uses JWT SVIDs
 #
 apiVersion: v1
 kind: ServiceAccount
@@ -19,9 +19,6 @@ spec:
     metadata:
       labels:
         app: workload-client
-        sidecar.istio.io/inject: 'true'
-      annotations:
-        inject.istio.io/templates: 'sidecar,spire'
     spec:
       serviceAccountName: workload-client
       containers:

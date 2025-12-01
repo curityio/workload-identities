@@ -1,9 +1,9 @@
 #!/bin/bash
 
-###################################################################
+#####################################################################################
 # A script to test getting an access token using a SPIFFE X509 SVID
-# The example uses mTLS by proxy so that the 
-###################################################################
+# The example uses mTLS by proxy where the client's Istio sidecar sends the X509 SVID
+#####################################################################################
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 

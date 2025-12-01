@@ -1,7 +1,7 @@
 # Strong OAuth Client Credentials with SPIFFE
 
-A deployment that uses SPIFFE JWT SVIDs and X509 SVIDs as strong client credentials.\
-A workload uses SPIFFE SVIDs to get OAuth access tokens.
+A deployment that uses SPIFFE X509 SVIDs as strong client credentials.\
+A workload uses SPIFFE X509 SVIDs to get OAuth sender-contrained access tokens.
 
 ## Deploy the System
 
@@ -29,12 +29,10 @@ The example deployment then integrates a service mesh with SPIRE:
 ./4-deploy-service-mesh.sh
 ```
 
-Then deploy the Curity Identity Server, supplying the path to a license file.\
-Start with the simpler deployment that only uses JWT SVIDs:
+Then deploy the Curity Identity Server, supplying the path to a license file:
 
 ```bash
 export LICENSE_FILE_PATH=license.json
-export CONFIGURE_X509_TRUST=false
 ./5-deploy-curity-identity-server.sh
 ```
 
@@ -55,69 +53,12 @@ kubectl -n curity port-forward "$POD" 6749:6749
 
 Then browse to `http://localhost:6749/admin` and sign in as user `admin` with password `Password1`.
 
-## Test JWT SVIDs
-
-Remote to the workload client's pod:
-
-```bash
-POD=$(kubectl -n applications get pods --selector='app=workload-client' -o=name)
-kubectl -n applications exec -it "$POD" -- bash
-```
-
-Then run a flow to get an access token using a SPIFFE JWT SVID:
-
-```bash
-./jwt-svid-authenticate-and-get-access-token.sh
-```
-
-The script outputs the header and payload of the SPIRE JWT SVID:
-
-```json
-{
-  "alg": "ES256",
-  "kid": "rwn03JoPg7NkRhMxqiWu32OjbvXMwjc9",
-  "typ": "JWT"
-}
-{
-  "aud": [
-    "https://login.curitydemo.example/oauth/v2/oauth-token"
-  ],
-  "exp": 1763544838,
-  "iat": 1763541238,
-  "iss": "https://oidc-discovery.curitydemo",
-  "sub": "spiffe://curitydemo/ns/applications/sa/workload-client"
-}
-```
-
-The script then outputs the header and payload of the access token that the workload uses to call APIs:
-
-```json
-{
-  "kid": "-1327236000",
-  "x5t": "7vcSVKpOYe3ckTlcYLLm5Y_Vdpg",
-  "alg": "ES256"
-}
-{
-  "jti": "284fbf2f-0875-4db8-8bf3-48ecfce78847",
-  "delegationId": "790369fb-1e5d-4261-95bf-3415890d46b3",
-  "exp": 1763377508,
-  "nbf": 1763376608,
-  "scope": "reports",
-  "iss": "https://login.curitydemo.example/oauth/v2/oauth-anonymous",
-  "sub": "jwt_assertion_client",
-  "aud": "api.curitydemo.example",
-  "iat": 1763376608,
-  "purpose": "access_token"
-}
-```
-
 ## Test X509 SVIDs
 
 Redeploy the Curity Identity Server with a more complex deployment that enables the use of X509 SVIDs:
 
 ```bash
 export LICENSE_FILE_PATH=license.json
-export CONFIGURE_X509_TRUST=true
 ./5-deploy-curity-identity-server.sh
 ```
 

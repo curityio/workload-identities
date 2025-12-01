@@ -7,6 +7,15 @@
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 #
+# Use the advanced values file when using SPIRE integration
+#
+if [ "$1" == 'x509' ]; then
+  CLIENT_DEPLOYMENT='x509-client.yaml'
+else
+  CLIENT_DEPLOYMENT='jwt-client.yaml'
+fi
+
+#
 # Download the SPIFFE helper binary for Linux and unpack it
 #
 VERSION='v0.11.0'
@@ -32,8 +41,7 @@ fi
 #
 # Deploy the client workload
 #
-kubectl -n applications delete -f client.yaml 2>/dev/null
-kubectl -n applications apply  -f client.yaml
+kubectl -n applications apply -f "$CLIENT_DEPLOYMENT"
 if [ $? -ne 0 ]; then
   exit 1
 fi

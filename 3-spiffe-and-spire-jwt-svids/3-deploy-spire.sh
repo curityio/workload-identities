@@ -6,4 +6,4 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
-./spire/deploy.sh
+../resources/spire/deploy.sh

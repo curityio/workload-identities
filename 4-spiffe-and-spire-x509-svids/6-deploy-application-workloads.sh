@@ -14,4 +14,4 @@ kubectl create namespace applications 2>/dev/null
 #
 # Deploy the client workload
 #
-./client/deploy.sh
+../resources/spiffe-client/deploy.sh 'x509'

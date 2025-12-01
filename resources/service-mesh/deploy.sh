@@ -1,10 +1,19 @@
 #!/bin/bash
 
-##################################################
-# Install the Istio service mesh using Helm charts
-##################################################
+################################
+# Deploy the API client workload
+################################
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
+
+#
+# Use the advanced values file when using SPIRE integration
+#
+if [ "$1" == 'spire' ]; then
+  VALUES_FILE='istiod-spire-values.yaml'
+else
+  VALUES_FILE='istiod-values.yaml'
+fi
 
 #
 # Get Helm charts
@@ -33,11 +42,10 @@ fi
 echo 'Installing istiod ...'
 helm upgrade --install istiod istio/istiod \
   --namespace istio-system \
-  --values=istiod-values.yaml \
+  --values="$VALUES_FILE" \
   --version "$ISTIO_VERSION" \
   --wait
 if [ $? -ne 0 ]; then
   echo 'Problem encountered installing istiod'
   exit 1
 fi
-

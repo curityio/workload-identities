@@ -1,8 +1,8 @@
 #!/bin/bash
 
-###########################################################
-# Deploy the Curity Identity Server to integrate with SPIRE
-###########################################################
+#####################################################################
+# Deploy the Curity Identity Server to integrate with SPIRE JWT SVIDs
+#####################################################################
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
@@ -34,11 +34,10 @@ if [ $? -ne 0 ]; then
 fi
 
 #
-# Create the namespace and service accounts, and require mTLS to call workloads
+# Create the namespace and service accounts
 #
 kubectl create namespace curity 2>/dev/null
 kubectl -n curity apply -f ../resources/idsvr/service-accounts.yaml
-kubectl -n curity apply -f ../resources/idsvr/mtls.yaml
 
 #
 # Configure the cert-manmager root CA as a trust store
@@ -60,33 +59,14 @@ kubectl -n curity create secret generic idsvr-secrets \
   --from-literal="WORKLOAD_ROOT_CA=$WORKLOAD_ROOT_CA"
 
 #
-# Use an alternative Helm values file if running the more complex deployment that uses X509 SVIDs
-#
-if [ "$CONFIGURE_X509_TRUST" == 'true' ]; then
-  VALUES_FILE=./idsvr/x509/values.yaml
-else
-  VALUES_FILE=./idsvr/values.yaml
-fi
-
-#
 # Run the Helm Chart to deploy the system
 #
 helm repo add curity https://curityio.github.io/idsvr-helm
 helm repo update
 helm upgrade --install curity curity/idsvr \
     --namespace curity \
-    --values=$VALUES_FILE
+    --values=idsvr/values.yaml
 if [ $? -ne 0 ]; then
   echo 'Problem encountered running the Helm Chart for the Curity Identity Server'
   exit 1
-fi
-
-#
-# Add an envoy filter to enable clients to use X509 SVIDs for client authentication
-#
-if [ "$CONFIGURE_X509_TRUST" == 'true' ]; then
-  kubectl -n curity apply -f idsvr/x509/client-certificate-forwarder.yaml
-  if [ $? -ne 0 ]; then
-    exit 1
-  fi
 fi
