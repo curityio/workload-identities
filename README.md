@@ -47,6 +47,6 @@ This deployment shows how workloads can use X509 SVIDs as an authentication cred
 
 ## More Information
 
-- See the [Non Human Identities](https://curity.io/resources/machine-identities) tutorials for further details on the integrations.
+- See the [Non Human Identities](https://curity.io/resources/non-human-identities) tutorials for further details on the integrations.
 - See the [Kubernetes Tutorials](https://curity.io/resources/kubernetes/) for further related content, on topics like adding ingress and data sources.
 - Please visit [curity.io](https://curity.io/) for more information about the Curity Identity Server.
