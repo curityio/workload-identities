@@ -1,0 +1,48 @@
+###################################################################################
+# Create a self signed issuer as a root certificate authority for SPIRE
+# - https://cert-manager.io/docs/configuration/selfsigned/#bootstrapping-ca-issuers
+###################################################################################
+
+#
+# Create a self signed issuer
+#
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: rootca-issuer
+spec:
+  selfSigned: {}
+---
+#
+# Issue a root CA as the upstream certificate authority for SPIRE
+#
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rootca
+spec:
+  isCA: true
+  duration: 8760h
+  secretName: rootca-secret
+  commonName: curitydemo-root-ca
+  subject:
+    organizations:
+      - curitydemo
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: rootca-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+#
+# Create an issuer of intermediate certificates that uses the root CA
+#
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: spire-ca-issuer
+spec:
+  ca:
+    secretName: rootca-secret

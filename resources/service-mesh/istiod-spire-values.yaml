@@ -1,0 +1,22 @@
+##############################################################################################################
+# Integrate Istio with SPIRE, by mounting the CSI driver at the path from which Istio gets workload identities
+# https://istio.io/latest/docs/ops/integrations/spire/#install-istio
+##############################################################################################################
+meshConfig:
+  trustDomain: curitydemo
+
+sidecarInjectorWebhook:
+  templates:
+    spire: |
+      spec:
+        initContainers:
+        - name: istio-proxy
+          volumeMounts:
+          - name: workload-socket
+            mountPath: /run/secrets/workload-spiffe-uds
+            readOnly: true
+        volumes:
+          - name: workload-socket
+            csi:
+              driver: "csi.spiffe.io"
+              readOnly: true

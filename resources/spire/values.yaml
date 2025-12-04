@@ -1,0 +1,23 @@
+#########################################################################################################
+# Parameters for the SPIRE Helm chart
+# - https://github.com/spiffe/helm-charts-hardened/blob/main/charts/spire/values.yaml
+# - https://github.com/spiffe/helm-charts-hardened/blob/main/charts/spire/charts/spire-server/values.yaml
+#########################################################################################################
+global:
+  spire:
+    clusterName: curitydemo
+    trustDomain: curitydemo
+    caSubject:
+      country: SE
+      organization: curitydemo
+      commonName: curitydemo-intermediate-ca
+
+spire-server:
+  replicaCount: 1
+  caKeyType: ec-p256
+  upstreamAuthority:
+    certManager:
+      enabled: true
+      issuerName: spire-ca-issuer
+      issuerKind: ClusterIssuer
+      issuerGroup: cert-manager.io

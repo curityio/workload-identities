@@ -1,0 +1,27 @@
+#
+# A test workload that uses a sidecar so can make mTLS requests to the Curity Identity Server
+#
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: workload-client
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workload-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workload-client
+  template:
+    metadata:
+      labels:
+        app: workload-client
+        sidecar.istio.io/inject: 'true'
+    spec:
+      serviceAccountName: workload-client
+      containers:
+      - name: workload-client
+        image: client:1.0

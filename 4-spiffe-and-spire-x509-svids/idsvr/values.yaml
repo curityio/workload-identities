@@ -1,0 +1,114 @@
+###############################################################################################################
+# A more complex deployment to ensure that the Curity Identity Server trusts the SPIRE intermediate certificate
+# - An init container configures the current certificate when pods start
+# - A sidecar container updates the configuration when SPIRE renews the certificate
+###############################################################################################################
+
+replicaCount: 1
+
+image:
+  repository: 'custom_idsvr'
+  tag: '1.0'
+
+curity:
+  adminUiHttp: true
+  admin:
+    podLabels:
+      sidecar.istio.io/inject: 'true'
+    podAnnotations:
+      inject.istio.io/templates: 'sidecar,spire'
+    serviceAccount:
+      name: curity-idsvr-admin
+
+    #
+    # The init container configures the Curity Identity Server to trust the SPIFFE intermediate CA
+    # This occurs before the main admin container starts, so that it uses the current certificate
+    #
+    extraEnv:
+    - name: WORKLOAD_INTERMEDIATE_CA
+      valueFrom:
+        fileKeyRef:
+          path: .env
+          volumeName: startup-environment-variables
+          key: WORKLOAD_INTERMEDIATE_CA
+          optional: true          
+    initContainers:
+    - name: trust-init
+      image: trust_init:1.0
+      volumeMounts:
+      - name: spiffe-workload-api
+        mountPath: /spiffe-workload-api
+        readOnly: true
+      - name: svids
+        mountPath: /svids
+      - name: startup-environment-variables
+        mountPath: /tmp/startup-environment-variables
+    
+    #
+    # The update container uses RESTCONF to update the Curity Identity Server
+    # This keeps the SPIFFE intermediate CA up to date when it is renewed
+    #
+    - name: trust-update
+      image: trust_update:1.0
+      restartPolicy: Always
+      volumeMounts:
+      - name: spiffe-workload-api
+        mountPath: /spiffe-workload-api
+        readOnly: true
+      - name: svids
+        mountPath: /svids
+    extraVolumes:
+    - name: spiffe-workload-api
+      csi:
+        driver: 'csi.spiffe.io'
+        readOnly: true
+    - name: svids
+      emptyDir: {}
+    - name: startup-environment-variables
+      emptyDir: {}
+
+  runtime:
+    podLabels:
+      sidecar.istio.io/inject: 'true'
+    podAnnotations:
+      inject.istio.io/templates: 'sidecar,spire'
+    serviceAccount:
+      name: curity-idsvr-runtime
+
+    #
+    # The init container configures the Curity Identity Server to trust the SPIFFE intermediate CA
+    # This occurs before the main runtime container starts, so that it uses the current certificate
+    #
+    extraEnv:
+    - name: WORKLOAD_INTERMEDIATE_CA
+      valueFrom:
+        fileKeyRef:
+          path: .env
+          volumeName: startup-environment-variables
+          key: WORKLOAD_INTERMEDIATE_CA
+          optional: true          
+    initContainers:
+    - name: trust-init
+      image: trust_init:1.0
+      volumeMounts:
+      - name: spiffe-workload-api
+        mountPath: /spiffe-workload-api
+        readOnly: true
+      - name: svids
+        mountPath: /svids
+      - name: startup-environment-variables
+        mountPath: /tmp/startup-environment-variables
+    extraVolumes:
+    - name: spiffe-workload-api
+      csi:
+        driver: 'csi.spiffe.io'
+        readOnly: true
+    - name: svids
+      emptyDir: {}
+    - name: startup-environment-variables
+      emptyDir: {}
+
+  config:
+    uiEnabled: true
+    environmentVariableSecrets:
+    - idsvr-secrets
